@@ -1,103 +1,1279 @@
 <!DOCTYPE html>
-
-<html lang="en-us">
+<html lang="en-us" id="mainhtml">
 <head>
-<meta charset="utf-8"/>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Unity WebGL Player | Sniper battle</title>
-<link rel="stylesheet" href="TemplateData/style.css"/>
-<script src="https://app-260749.games.s3.yandex.net/sdk/_/v2.c0ffcbe656dd5022e92c.js"></script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VGVP085QMS" type="73e32866a0482d67866e7c77-text/javascript"></script>
+<script type="73e32866a0482d67866e7c77-text/javascript">
+        (function(w,d,a,m){
+            var s='script';var g='GameAnalytics';
+            w[g]=w[g]||function(){(w[g].q=w[g].q||[]).push(arguments)},
+            a=d.createElement(s),
+            m=d.getElementsByTagName(s)[0];
+            a.async=1;
+            a.src='https://download.gameanalytics.com/js/GameAnalytics-4.0.0.min.js';
+            m.parentNode.insertBefore(a,m)
+        })(window,document);
+        GameAnalytics("initialize", "1d9b6a98f5440b2f80e8ca241d392992", "73e9fc1d3fef2560ec1d9a4b453844697054a1d6");
+    </script>
+<script type="73e32866a0482d67866e7c77-text/javascript">
+        var unityInstanceWrapper = {
+            sendMessage: function(objectName, methodName, message) {
+                if (typeof window.unityInstance !== 'undefined' && window.unityInstance !== null) {
+                    window.unityInstance.SendMessage(objectName, methodName, message);
+                } else {
+                    console.warn(`cannot call ${methodName}`);
+                }
+            }
+        };
+        function hasQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.has(param) && urlParams.get(param) === 'true';
+        }
+        window.sdkVersion = hasQueryParam('cg') ? 'CrazyGames' : 'Vanilla';
+        function postData(url, data, async = true) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url, async);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log('Response from ' + url + ': ' + xhr.responseText);
+                }
+            };
+            xhr.send(JSON.stringify(data));
+        }
+        function requestNewVersion() {
+            location.reload(true);
+        }
+        window.alert = function () { };
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-VGVP085QMS');
+        function reportLoadingStart() {
+            postData('https://kour.io/api/loadingStart', { gameVersion: window.sdkVersion });
+            //for cg - sdkGameLoadingStart is called right after the cg script initializes.
+            
+        }
+        function reportVideoAdSource(source) {
+        }
+        function reportLoadingFinished() {
+            var banrs = document.getElementById("fullscreen-banrs");
+            if (banrs)
+                banrs.style.display = "block";
+
+            postData('https://kour.io/api/loadingFinished', { gameVersion: window.sdkVersion });
+            window.sessionStorage.setItem('playStartTime', new Date().toISOString());
+
+            try {
+                window.CrazyGames.SDK.game.sdkGameLoadingStop();
+            } catch { }
+        }
+        function reportCustom(reportEventName, sdkVersion) {
+            gtag('event', reportEventName, {
+                'event_category': 'interaction',
+                'event_label': sdkVersion
+            });
+        }
+        function onMapPlayStarted(mapName) {
+            const startTime = new Date().toISOString();
+            window.sessionStorage.setItem('mapPlayStartTime', startTime);
+            window.sessionStorage.setItem('currentMapName', mapName);
+        }
+        function onMapPlayEnd() {
+            const playEndTime = new Date();
+            const playStartTime = window.sessionStorage.getItem('mapPlayStartTime');
+            const mapName = window.sessionStorage.getItem('currentMapName');
+            const sdkVersion = window.sdkVersion || 'Vanilla';  // Default to 'Vanilla' if sdkVersion is not set
+
+            if (playStartTime && mapName) {
+                const duration = playEndTime - new Date(playStartTime);
+
+                postData('https://kour.io/api/trackMapPlaytime', {
+                    timestamp: playEndTime.toISOString(),
+                    duration: duration,
+                    gameVersion: sdkVersion,
+                    mapName: mapName
+                }, false);
+                // Clear the session storage items
+                window.sessionStorage.removeItem('mapPlayStartTime');
+                window.sessionStorage.removeItem('currentMapName');
+            }
+        }
+    </script>
+<link rel="manifest" href="manifest.webmanifest">
+
+
+<style type="text/css">@font-face {font-family:VT323;font-style:normal;font-weight:400;src:url(/cf-fonts/s/vt323/5.0.11/latin-ext/400/normal.woff2);unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:VT323;font-style:normal;font-weight:400;src:url(/cf-fonts/s/vt323/5.0.11/vietnamese/400/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:VT323;font-style:normal;font-weight:400;src:url(/cf-fonts/s/vt323/5.0.11/latin/400/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Kour.io | FPS io Game - Play Kour io Online!</title>
+<meta name="description" content="Kour.io is a free Multiplayer Online FPS Game. No Download needed! Become the #1 Kour player today in this first-person shooter IO Kour game.">
+<meta name="keywords" content="Kour.io, battle royale, 3D game, online multiplayer, free game, brawl stars, browser-based, shooting game, battle royale game, IO game, tank game, online gaming, multiplayer game, friends, weapons, coins, action-packed">
+<meta name="author" content="LEGiON Platforms">
+<link id="data-link" rel="preload" href="https://kour.b-cdn.net/4e059686d4828eb91c0893d9abd6738a.data.br" as="fetch" type="application/octet-stream" crossorigin>
+<link id="framework-link" rel="preload" href="https://kour.b-cdn.net/67de5a2054477d88a96dc44ae53dee2e.framework.js.br" as="script">
+<link id="code-link" rel="preload" href="https://kour.b-cdn.net/f87e11114f13ea3beb7aaaeb4ff855e7.wasm.br" as="fetch" type="application/wasm" crossorigin>
+<script type="73e32866a0482d67866e7c77-text/javascript">
+        if (/Mobi|Android/i.test(navigator.userAgent)) {
+            document.getElementById('data-link').href = "https://kour-mobile.b-cdn.net/4e059686d4828eb91c0893d9abd6738a.data.br";
+            document.getElementById('framework-link').href = "https://kour-mobile.b-cdn.net/67de5a2054477d88a96dc44ae53dee2e.framework.js.br";
+            document.getElementById('code-link').href = "https://kour-mobile.b-cdn.net/f87e11114f13ea3beb7aaaeb4ff855e7.wasm.br";
+        }
+    </script>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="stylesheet" href="TemplateData/style.css">
+<meta content="Kour.io | FPS Game" property="og:title" />
+<meta content="Kour.io is a free Multiplayer Online FPS Game. No Download needed! Become the #1 Kour player today in this first-person shooter IO Kour game." property="og:description" />
+<meta content="https://kour.io/TemplateData/background-og.webp" property="og:image" />
+<meta property="og:url" content="https://kour.io" />
+<meta property="og:type" content="website" />
+<meta property="og:image:width" content="192">
+<meta property="og:image:height" content="108">
+<meta property="og:site_name" content="Kour.io" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kour.io | FPS Game">
+<meta name="twitter:description" content="Kour.io is a free Multiplayer Online FPS Game. No Download needed! Become the #1 Kour player today in this first-person shooter IO Kour game.">
+<meta name="twitter:image" content="https://kour.io/TemplateData/background-og.webp">
+<meta name="twitter:url" content="https://kour.io">
+<meta content="#ffd900" data-react-helmet="true" name="theme-color" />
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
+    </style>
+<meta name="apple-mobile-web-app-title" content="Kour.io">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preload" href="https://kour.io/TemplateData/background.webp" as="image">
+<meta itemprop="image primaryImageOfPage" content="https://kour.io/TemplateData/background.webp">
+<script src="https://www.google.com/recaptcha/api.js" async defer type="73e32866a0482d67866e7c77-text/javascript"></script>
+
+<script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type":"VideoGame",
+            "publisher": "Legion Platforms",
+            "name":[
+                {
+                    "@language":"en",
+                    "@value":"Kour.io"
+                }
+            ],
+            "description":[
+                {
+                    "@language":"en",
+                    "@value":"Kour.io is a free Multiplayer Online FPS Game. No Download needed! Become the #1 Kour player today in this first-person shooter IO Kour game."
+                }
+            ],
+            "applicationCategory":[
+                "Game"
+            ],
+            "operatingSystem":[
+                "WEB"
+            ],
+            "genre":[
+                "Shooter",
+                "Multiplayer"
+                "FPS",
+                "CSGO",
+                "Battle Royale",
+                "Counter Strike"
+            ],
+            "url":"https://kour.io/",
+            "image":"TemplateData/background.webp",
+            "screenshot":"TemplateData/background.webp"
+        }
+    </script>
 </head>
-<body>
-<div id="unity-container" style="position: absolute; width: 100%; height: 100%; left: 0%; top: 0%;">
-<canvas id="unity-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
-<div id="unity-loading-bar">
-<div id="unity-logo"></div>
-<div id="unity-progress-bar-empty">
+<body class="dark" style="background-color: black;">
+<script type="73e32866a0482d67866e7c77-text/javascript">
+        if (hasQueryParam('cg')) {
+            const script = document.createElement('script');
+            script.src = 'https://sdk.crazygames.com/crazygames-sdk-v2.js';
+            script.onload = function() {
+                // Once the script loads, call its sdkGameLoadingStart
+                try {
+                    if (typeof window.CrazyGames !== 'undefined' && typeof window.CrazyGames.SDK !== 'undefined') {
+                        window.CrazyGames.SDK.game.sdkGameLoadingStart();
+                    } else {
+                        console.error("CrazyGames SDK is not defined.");
+                    }
+                } catch (error) {
+                    console.error("Error calling sdkGameLoadingStart:", error);
+                }
+            };
+            document.head.appendChild(script);
+        }
+        else 
+        {
+            const adinplayScript = document.createElement('script');
+            adinplayScript.src = '//api.adinplay.com/libs/aiptag/pub/LGP/kour.io/tag.min.js';
+            adinplayScript.async = true;
+            document.head.appendChild(adinplayScript);
+            const aiptagScript = document.createElement('script');
+            aiptagScript.type = 'text/javascript';
+            aiptagScript.innerHTML = `
+                window.aiptag = window.aiptag || { cmd: [] };
+                aiptag.cmd.display = aiptag.cmd.display || [];
+                aiptag.cmd.player = aiptag.cmd.player || [];
+                aiptag.cmp = {
+                    show: false,
+                    position: "centered",
+                    button: false,
+                    buttonText: "Privacy settings",
+                    buttonPosition: "bottom-left"
+                }
+                aiptag.cmd.player.push(function () {
+                    aiptag.adplayer = new aipPlayer({
+                        AD_WIDTH: 960,
+                        AD_HEIGHT: 540,
+                        AD_DISPLAY: 'center',
+                        LOADING_TEXT: 'loading advertisement',
+                        PREROLL_ELEM: function () { return document.getElementById('videoad') },
+                        AIP_COMPLETE: function (state) {
+                            console.log("Video Ad Completed: " + state);
+                            // Check for failure conditions
+                            const lowerCaseState = state.toLowerCase();
+                            if (lowerCaseState.includes("adblock") || lowerCaseState.includes("failed") || lowerCaseState.includes("error")) {
+                                console.log("triggering fallbackToStar...");
+                                window.fallbackToStar();
+                            }
+                            else {
+                                //all good
+                                unityInstanceWrapper.sendMessage('MainManager', 'OnDaReveresedFinishedJS', state.toString());
+                            }
+                        }
+                    });
+                });
+            `;
+            document.head.appendChild(aiptagScript);
+            //adinplay end.
+            //cpmstar start
+            // <!-- ZONETAG - PLACE INTO HEAD SECTION OR RUN CODE AT STARTUP -->
+            (function (zonefile) {
+                var y = "cpmstarx";
+                var drutObj = window[y] = window[y] || {};
+                function failCpmstarAPI() { var failFn = function (o) { o && typeof (o) === "object" && o.fail && o.fail(); }; drutObj && Array.isArray(drutObj.cmd) && drutObj.cmd.forEach(failFn) && (drutObj.cmd.length = 0); window.cpmstarAPI = window["_" + zonefile] = failFn; }
+                var rnd = Math.round(Math.random() * 999999);
+                var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.onerror = failCpmstarAPI;
+                var proto = document.location.protocol;
+                var host = (proto == "https:" || proto == "file:") ? "https://server" : "//cdn";
+                if (window.location.hash == "#cpmstarDev") host = "//dev.server";
+                if (window.location.hash == "#cpmstarStaging") host = "//staging.server";
+                s.src = host + ".cpmstar.com/cached/zonefiles/" + zonefile + ".js?rnd=" + rnd;
+                var s2 = document.getElementsByTagName('script')[0];
+                s2.parentNode.insertBefore(s, s2);
+                window.cpmstarAPI = function (o) { (drutObj.cmd = drutObj.cmd || []).push(o); }
+            }('1137_54105_gameapi'));
+        }
+    </script>
+<script type="73e32866a0482d67866e7c77-text/javascript">
+
+        window.isMouseLocked = false;
+        document.addEventListener('keydown', function (event) {
+            if (window.isMouseLocked && (event.keyCode === 116 || event.keyCode === 82 && event.ctrlKey)) {
+                event.preventDefault();
+            }
+        });
+        function openPaymentStation(token) {
+            //var paymentUrl = `https://sandbox-secure.xsolla.com/paystation4/?token=${token}`;
+            //window.open(paymentUrl, 'PaymentStation', 'width=800,height=600');
+            var options = {
+                access_token: token
+                //sandbox: true
+            };
+            var s = document.createElement('script');
+            s.type = "text/javascript";
+            s.async = true;
+            s.src = "//cdn.xsolla.net/embed/paystation/1.2.7/widget.min.js";
+            s.addEventListener('load', function (e) {
+                console.log("init XPayStationWidget");
+                XPayStationWidget.init(options);
+                console.log("open XPayStationWidget");
+                XPayStationWidget.open();
+
+                XPayStationWidget.on(XPayStationWidget.eventTypes.STATUS, function (event, data) {
+                    var paymentInfoAsString = JSON.stringify(data.paymentInfo);
+                    console.log("js: paymentInfoAsString: " + paymentInfoAsString);
+                    unityInstanceWrapper.sendMessage('XsollaPayments', 'OnXsollaWindowUpdate', paymentInfoAsString);
+                });
+
+                XPayStationWidget.on(XPayStationWidget.eventTypes.CLOSE, function (event, data) {
+                    unityInstanceWrapper.sendMessage('XsollaPayments', 'OnXsollaWindowUpdate', "closed");
+                });
+
+            }, false);
+            var head = document.getElementsByTagName('head')[0];
+            head.appendChild(s);
+        }
+    </script>
+<div id="videoad"></div>
+<div id="fullscreen-banrs" style="pointer-events: all; display: none; user-select: none; position: absolute; top: 0; right: 0; bottom: 0; left: 0;">
+<div id="kour-io_300x250-parent" style="pointer-events: all; display: none; position: absolute; transform-origin: top right; top: 20%; right: 2%; z-index: 9999; width: 310px; height: 260px; padding: 5px; ">
+<div id="kour-io_300x250" style="user-select: none; width: 300px; height: 250px;">
+
+</div>
+</div>
+<div id="kour-io_728x90-parent" style="pointer-events: all; display: none; position: absolute; transform-origin: bottom center; bottom: 1%; left: 0px; right: 0px; margin-left: auto; margin-right: auto; z-index: 9999; width: 738px; height: 100px; padding: 5px; ">
+<div id="kour-io_728x90" style="user-select: none; width: 728px; height: 90px;">
+
+</div>
+</div>
+<div id="kour-io_300x600-parent" style="pointer-events: all; display: none; position: absolute; transform-origin: top left; top: 20%; left: 1%; z-index: 9999; width: 310px; height: 610px; padding: 5px; ">
+<div id="kour-io_300x600" style="user-select: none; width: 300px; height: 600px;">
+
+</div>
+</div>
+</div>
+<div id="rotateMessage" class="rotate-message">
+<p>Rotate to landscape mode!</p>
+<img src="https://kour.io/rotate.webp" alt="rotate your device to landscape mode!" style="width: 50%;" />
+<button id="usePortraitBtn"> Use Portrait Mode </button>
+</div>
+<script src="rotateDevice.js" type="73e32866a0482d67866e7c77-text/javascript"></script>
+<script type="73e32866a0482d67866e7c77-text/javascript">
+        let preventUnloadActive = false;
+
+        var beforeUnloaded = function (e) {
+            // Step 1:
+            onMapPlayEnd();
+
+            // Step 2:
+            const playEndTime = new Date();
+            const playStartTime = window.sessionStorage.getItem('playStartTime');
+
+            if (playStartTime) {
+                const duration = playEndTime - new Date(playStartTime);  // Calculate duration in milliseconds
+
+                // `false` to make the request synchronous, though deprecated
+                postData('/api/trackPlaytime', {
+                    timestamp: playEndTime.toISOString(),
+                    duration: duration,
+                    gameVersion: sdkVersion
+                }, false);
+            }
+
+            // The following text will be shown in a standard browser dialog
+            if (preventUnloadActive) {
+                const confirmationMessage = 'Are you sure you want to leave kour.io?';
+                e.returnValue = confirmationMessage; // Legacy method for cross-browser compatibility
+                return confirmationMessage; // Some browsers require this to work correctly
+            }
+        };
+
+        window.addEventListener('beforeunload', beforeUnloaded);
+
+        function PreventCtrlW() {
+            preventUnloadActive = true;
+        }
+
+        function AllowCtrlW() {
+            //window.removeEventListener('beforeunload', preventUnload);
+        }
+        function goDeepFullscreen() {
+        }
+        function goFullscreenMobile() {
+            var elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { // Firefox
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { // IE/Edge
+                elem.msRequestFullscreen();
+            }
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(function () {
+                    // Ignore errors for unsupported browsers
+                });
+            }
+            window.addEventListener('resize', function () {
+            });
+            setTimeout(function () {
+                window.scrollTo(0, 1);
+            }, 100);
+        }
+        function copyCurrentURL() {
+            let currentUrl = window.location.href;
+            const el = document.createElement('textarea');
+            el.value = currentUrl;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        }
+        function copyString(x) {
+            const el = document.createElement('textarea');
+            el.value = x;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        }
+        function SetCursor(x) {
+            console.log("SetCursor - " + x);
+            document.getElementById("mainhtml").style.cursor = x;
+        }
+        function reload() {
+            location.reload();
+        }
+        function setCursor(cursorStyle) {
+            var canvas = document.getElementById('unity-canvas');
+            canvas.style.cursor = cursorStyle;
+        }
+    </script>
+<div id="unity-container" style="position: absolute; width: 100%; height: 100%">
+<canvas id="unity-canvas" width="1920" height="1080" style="width: 100%; height: 100%; user-select: none; -webkit-user-select: none;"></canvas>
+</div>
+<div id="loading-cover" style="display: block; background-image: url('https://kour.io/TemplateData/background.webp') ">
+<div id="loading-cover-2"></div>
+<img class="kourTitle" src="https://kour.io/kour-title.webp">
+<p id="loadingTxt">Loading Kour Essentials...</p>
+<p id="loadingTxtMinimal"></p>
+<div id="unity-loading-bar" style="user-select: none; left: 0; right: 0;">
+<div id="unity-progress-bar-empty" style="display: none; margin-top: 0px;">
 <div id="unity-progress-bar-full"></div>
 </div>
+<div style="top: 28px;" class="spinner"></div>
 </div>
-<div id="unity-warning"> </div>
+<div id="unity-loading-bar-fast" style="user-select: none; display: none; margin-top: 0px;">
+<span class="fast-loader"></span>
 </div>
-<script>
+<img id="refreshImage" src="https://kour.io/refresh1.webp" alt="Please wait for the game to load.">
+<script type="73e32866a0482d67866e7c77-text/javascript">
+            document.addEventListener("DOMContentLoaded", function () {
+                onWindowResize();
+                const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isiOS) {
+                    document.querySelector('meta[name="theme-color"]').setAttribute("content", "#1f1f1f");
+                }
+                setTimeout(function () {
+                    var loadingCover2 = document.getElementById('loading-cover-2');
+                    if (loadingCover2) {
+                        loadingCover2.style.opacity = 1;
+                    }
+                    setTimeout(function () {
+                        if (loadingCover2) {
+                            loadingCover2.style.opacity = 0;
+                        }
+                    }, 17500);
+                }, 15000);
+                setTimeout(function () {
+                    var refreshImg = document.getElementById('refreshImage');
+                    if (refreshImg !== null) {
+                        refreshImg.style.animation = 'slideUp 1.0s forwards';
+                        refreshImg.addEventListener("mousedown", function (event) {
+                            event.preventDefault();
+                            showLoadingInfoMessage();
+                        });
+                        refreshImg.addEventListener("touchstart", function (event) {
+                            event.preventDefault();
+                            showLoadingInfoMessage();
+                        });
+                        function showLoadingInfoMessage() {
+                            showRetryPopup("Loading is ALMOST done. Kour.io is a first person shooter, so if you like shooting guns… wait a little bit more!<br>Click to close", false, false);
+                        }
+                        setTimeout(function () {
+                            refreshImg.style.animation = 'slideDown 1.0s forwards';
+                            setTimeout(function () {
+                                refreshImg.src = 'https://kour.io/refresh2.webp';
+                                setTimeout(function () {
+                                    refreshImg.src = 'https://kour.io/refresh2.webp';
+                                    refreshImg.style.animation = 'slideUp 1.0s forwards';
+                                }, 4000);
+                            }, 1000);
 
-        var v_isYSDKInitialized = false;
-        var v_isPlayerAuthorized = false;
-        var player;
-
-        function GameReadyNow(){
-          ysdk.features.LoadingAPI?.ready();
+                        }, 17500);
+                    }
+                }, 10000);
+            });
+        </script>
+</div>
+<script type="73e32866a0482d67866e7c77-text/javascript">
+        // Function to ease out progress percentage
+        function easeOutQuadPercentage(percent) {
+            var t = percent / 100;
+            return (1 - Math.pow(1 - t, 3)) * 100.0;
         }
+        function formatNumber(number) {
+            if (number < 1000) {
+                return number.toString(); // Return the original number if less than 1000
+            } else if (number < 1000000) {
+                return (number / 1000).toFixed(2) + 'k'; // Convert to 'k' format for thousands
+            } else {
+                return (number / 1000000).toFixed(2) + 'M'; // Convert to 'M' format for millions
+            }
+        }
+        function onWindowResize() {
+            var newScale = Math.min(window.innerWidth / 1920.0, window.innerHeight / 960.0);
+            var ad1 = document.getElementById("kour-io_300x250-parent");
+            var ad2 = document.getElementById("kour-io_728x90-parent");
+            var ad3 = document.getElementById("kour-io_300x600-parent");
+            if (ad1) ad1.style.transform = "scale(" + (newScale * 1.3) + ")";
+            if (ad2) ad2.style.transform = "scale(" + (newScale * 1.07) + ")";
+            if (ad3) ad3.style.transform = "scale(" + (newScale * 1.2) + ")";
+        };
+        onWindowResize();
+        window.onresize = onWindowResize;
+        window.onload = onWindowResize;
 
+        // Function to refresh an ad banner if it is visible
+        function refreshAdBanner(tagad) {
+            var adElement = document.getElementById(`${tagad}-parent`);
+            if (adElement && adElement.style.display !== "none") {
+                if (typeof aiptag !== 'undefined' && aiptag.cmd && typeof aipDisplayTag !== 'undefined') {
+                    aipDisplayTag.display(`${tagad}`);
+                } else {
+                    console.error('aiptag or aipDisplayTag is not defined.');
+                }
+            }
+        }
+        function SetAds(presetName72890, presetName300600, presetName300250) {
+            var ad1 = document.getElementById("kour-io_728x90-parent");
+            var ad2 = document.getElementById("kour-io_300x600-parent");
+            var ad3 = document.getElementById("kour-io_300x250-parent");
+            if (ad1) {
+                if (presetName72890 === "hidden") {
+                    ad1.style.display = "none";
+                }
+                else if (presetName72890 === "bottom") {
+                    ad1.style.display = "block";
+                }
+            }
+            if (ad2) {
+                if (presetName300600 === "hidden") {
+                    ad2.style.display = "none";
+                } else if (presetName300600 === "left") {
+                    ad2.style.transformOrigin = "top left";
+                    ad2.style.top = "20%";
+                    ad2.style.left = "1%";
+                    ad2.style.removeProperty('right');
+                    ad2.style.display = "block";
+                } else if (presetName300600 === "right") {
+                    ad2.style.transformOrigin = "top right";
+                    ad2.style.top = "20%";
+                    ad2.style.right = "1%";
+                    ad2.style.removeProperty('left');
+                    ad2.style.display = "block";
+                }
+            }
+            if (ad3) {
+                if (presetName300250 === "hidden") {
+                    ad3.style.display = "none";
+                } else if (presetName300250 === "left") {
+                    ad3.style.transformOrigin = "top left";
+                    ad3.style.top = "33%";
+                    ad3.style.left = "6%";
+                    ad3.style.removeProperty('right');
+                    ad3.style.display = "block";
+                } else if (presetName300250 === "right") {
+                    ad3.style.transformOrigin = "top right";
+                    ad3.style.top = "20%";
+                    ad3.style.right = "2%";
+                    ad3.style.removeProperty('left');
+                    ad3.style.display = "block";
+                } else if (presetName300250 === "topleft") {
+                    ad3.style.transformOrigin = "top left";
+                    ad3.style.top = "10%";
+                    ad3.style.left = "1%";
+                    ad3.style.removeProperty('right');
+                    ad3.style.display = "block";
+                }
+            }
+        }
     </script>
-<script>
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var warningBanner = document.querySelector("#unity-warning");
-
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+<style>
+        #words {
+            font-family: 'Fjalla One', sans-serif;
+            text-align: left;
+            justify-content: left;
+            user-select: none;
+            font-size: 37px;
         }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
+
+        #unity-logo {
+            max-width: 300px;
         }
-        updateBannerVisibility();
-      }
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Build.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/Build.data.unityweb",
-        frameworkUrl: buildUrl + "/Build.framework.js.unityweb",
-        codeUrl: buildUrl + "/Build.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Neptune Games",
-        productName: "Sniper battle",
-        productVersion: "0.0.0.2",
-        showBanner: unityShowBanner,
-      };
+        @media (max-width: 1200px) {
+            #words {
+                font-size: 30px;
+            }
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        container.className = "unity-mobile";
-        canvas.className = "unity-mobile";
-      } else {
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-      }
+            #unity-logo {
+                max-width: 250px;
+            }
+        }
 
-      loadingBar.style.display = "block";
+        @media (max-width: 992px) {
+            #words {
+                font-size: 25px;
+            }
 
-      var myGameInstance = null;
+            #unity-logo {
+                max-width: 200px;
+            }
+        }
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
-          myGameInstance = unityInstance;
+        @media (max-width: 768px) {
+            #words {
+                font-size: 20px;
+            }
 
-          loadingBar.style.display = "none";
-        }).catch((message) => {
-          alert(message);
+            #unity-logo {
+                max-width: 150px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #words {
+                font-size: 15px;
+            }
+
+            #unity-logo {
+                max-width: 100px;
+            }
+        }
+    </style>
+<script type="73e32866a0482d67866e7c77-text/javascript">
+            function isVirtualControls() {
+                var userAgent = navigator.userAgent.toLowerCase();
+
+                if (/windows nt/.test(userAgent) && !/windows phone/.test(userAgent)) {
+                    return false;
+                }
+
+                if (/CrOS/.test(userAgent)) {
+                    return false;
+                }
+
+                if (/mobile/.test(userAgent)) {
+                    return true;
+                }
+
+                var isIPad = /ipad|macintosh/.test(userAgent) && navigator.maxTouchPoints && navigator.maxTouchPoints > 1;
+                var isAndroidTablet = /android/.test(userAgent) && !/mobile/.test(userAgent);
+                if (isIPad || isAndroidTablet) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            window.receivedServiceWorkerMessage = false;
+            function preventZoomDuringLoading(event) {
+                if (window.gameLoading) {
+                    event.preventDefault();
+                }
+            }
+            document.addEventListener('touchstart', preventZoomDuringLoading, { passive: false });
+            document.addEventListener('touchmove', preventZoomDuringLoading, { passive: false });
+            function playerPrefsSetFloat(key, value) {
+                localStorage.setItem(key, value.toString());
+            }
+            function playerPrefsGetFloat(key, defaultValue = 0.9) {
+                const storedValue = localStorage.getItem(key);
+                const parsedValue = storedValue ? parseFloat(storedValue) : defaultValue;
+                return parsedValue;
+            }
+          var container = document.querySelector("#unity-container");
+          var canvas = document.querySelector("#unity-canvas");
+          const loadingCover = document.querySelector("#loading-cover");
+          const fastLoadingAnim = document.querySelector("#unity-loading-bar-fast");
+          const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+          const loadingTxt = document.querySelector("#loadingTxt");
+          var progressBarFull = document.querySelector("#unity-progress-bar-full");
+          var isMobile = isVirtualControls();
+
+
+          // Function to check if an ad has been loaded
+            function checkAdLoaded(adContainerId) {
+                const adContainer = document.getElementById(adContainerId);
+                if (adContainer && adContainer.style.display !== 'none') {
+                    // Ad is loaded if the container is displayed
+                    return true;
+                }
+                return false;
+            }
+
+            // Function to hide ad containers if ads do not load within a timeout
+            function hideEmptyAdContainers() {
+                const adContainers = [
+                    'kour-io_300x250-parent',
+                    'kour-io_728x90-parent',
+                    'kour-io_300x600-parent'
+                ];
+                
+                adContainers.forEach((adContainerId) => {
+                    if (!checkAdLoaded(adContainerId)) {
+                        document.getElementById(adContainerId).style.display = 'none';
+                    }
+                });
+            }
+
+            // Function to load ad banners and set a timeout to check ad loading status
+            function loadAdBannerScript(tagad, width, height) {
+                console.log(`[INFO] loadAdBannerScript: tagad:${tagad}, width:${width}, height:${height}`);
+                
+                let adLoaded = false;
+
+                if (hasQueryParam('cg')) {
+                    //todo: later
+                    /*
+                    if (typeof window !== 'undefined' && window.CrazyGames) {
+                        if (height !== 600) {
+                            window.CrazyGames.SDK.banner.requestBanner({
+                                id: `${tagad}`,
+                                width: width,
+                                height: height,
+                            });
+                            adLoaded = true;
+                        }
+                    } else {
+                        console.error('CrazyGames SDK is not available.');
+                    }
+                    */
+                } else {
+                    if (typeof aiptag !== 'undefined' && aiptag.cmd && typeof aipDisplayTag !== 'undefined') {
+                        aiptag.cmd.display.push(function () {
+                            aipDisplayTag.display(`${tagad}`);
+                            adLoaded = true;
+                        });
+                    } else {
+                        console.error('aiptag or aipDisplayTag is not defined.');
+                    }
+                }
+                
+                /*
+                if (adLoaded) {
+                    setTimeout(hideEmptyAdContainers, 5000); // Check after 5 seconds
+                }
+
+                if (typeof refreshAdBanner !== 'undefined') {
+                    setInterval(function () {
+                        refreshAdBanner(tagad);
+                    }, 30000);
+                } else {
+                    console.error('refreshAdBanner function is not defined.');
+                }
+                */
+            }
+
+            window.onGameLoaded = function() {
+                if (isMobile) {
+                    // Uncomment and specify width and height if needed for mobile
+                    // loadAdBannerScript('kour-io_728x90', 728, 90);
+                    // loadAdBannerScript('kour-io_300x250', 300, 250);
+                    // loadAdBannerScript('kour-io_300x600', 300, 600);
+                } else {
+                    loadAdBannerScript('kour-io_728x90', 728, 90);
+                    loadAdBannerScript('kour-io_300x250', 300, 250);
+                    loadAdBannerScript('kour-io_300x600', 300, 600);
+                }
+            };
+
+
+
+
+        var buildUrl = isMobile ? "https://kour-mobile.b-cdn.net" : "https://kour.b-cdn.net";
+        if (window.location.href.includes("playtest.")) buildUrl = isMobile ? "mobile/Build" : "Build";
+
+        var loaderUrl = buildUrl + "/87676c2774f1dd60ffeb1a3f5d10a91a.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/4e059686d4828eb91c0893d9abd6738a.data.br",
+            frameworkUrl: buildUrl + "/67de5a2054477d88a96dc44ae53dee2e.framework.js.br",
+            codeUrl: buildUrl + "/f87e11114f13ea3beb7aaaeb4ff855e7.wasm.br",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "LEGiONPlatforms",
+            productName: "Kour.io",
+            productVersion: "4.01",
+            devicePixelRatio: playerPrefsGetFloat("renderScaleWeb", 0.90)
+          };
+          if (isMobile) {
+            var meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+            document.getElementsByTagName('head')[0].appendChild(meta);
+            config.devicePixelRatio = playerPrefsGetFloat("renderScaleWeb", 0.90) * 1.00;
+          }
+            var tips = [
+                "Downloading Models",
+                "Installing Menu",
+                "Downloading Maps",
+                "Downloading Buttons",
+                "Installing 3D Objects",
+                "Downloading Characters",
+                "Installing Animations",
+                "Downloading Graphics",
+                "Downloading Gradients",
+                "Installing Shop",
+                "Installing Servers",
+                "Downloading Lobbies",
+                "Installing Shaders",
+                "Downloading Game Modes",
+                "Downloading Enemy Profiles",
+                "Installing Weapon Upgrades",
+                "Downloading Armor Enhancements",
+                "Installing Soundtracks",
+                "Downloading Voice Packs",
+                "Downloading Multiplayer Modes",
+                "Installing Special Effects",
+                "Downloading Achievements",
+                "Downloading Replay Data",
+                "Downloading Leaderboard Information",
+                "Installing Custom Skins",
+                "Installing Environmental Details"
+            ];
+            function updateLoadingTextWithTip() {
+                var randomTip = tips[Math.floor(Math.random() * tips.length)];
+                if (!window.receivedServiceWorkerMessage)
+                    loadingTxt.innerHTML = randomTip;
+                var longerDuration = Math.random() < 0.2;
+                var rnd2 = Math.random() < 0.5;
+                var nextTipTimeout = longerDuration ? 1000 : (rnd2 ? 250 : 500);
+                clearTimeout(tipInterval);
+                tipInterval = setTimeout(updateLoadingTextWithTip, nextTipTimeout);
+            }
+            
+
+
+            // Function to clamp a number within a range
+        function clamp(num, min, max) {
+            return num <= min ? min : num >= max ? max : num;
+        }
+
+        
+
+        // Simulate loading progress after 89%
+        let simulatedProgress = 89;
+        let simulationInterval;
+
+        function simulateProgress() {
+            if (simulatedProgress < 100) {
+                simulatedProgress++;
+                updateProgressUI(simulatedProgress);
+            } else {
+                clearInterval(simulationInterval);
+            }
+        }
+
+        // Function to update the UI based on progress
+        function updateProgressUI(percent) {
+            if (window.unityInstance){
+                clearInterval(simulationInterval);
+                return;
+            }
+            const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+            const progressBarFull = document.querySelector("#unity-progress-bar-full");
+            const loadingTxt = document.querySelector("#loadingTxt");
+            const loadingTxtMinimal = document.querySelector("#loadingTxtMinimal");
+            const fastLoadingAnim = document.querySelector("#unity-loading-bar-fast");
+
+            if (percent < 99) {
+                progressBarEmpty.style.display = "";
+                progressBarFull.style.width = `${percent}%`;
+                progressBarFull.style.display = "block";
+                fastLoadingAnim.style.display = "none";
+                loadingTxtMinimal.innerHTML = `Loaded ${percent.toFixed(2)}%`;
+            } else {
+                progressBarEmpty.style.display = "none";
+                progressBarFull.style.display = "none";
+                fastLoadingAnim.style.display = "block";
+                loadingTxtMinimal.innerHTML = "Almost There! (Decompressing...)";
+            }
+
+            if (loadingTxt) {
+                loadingTxt.innerHTML = `Downloading Game Files ${percent.toFixed(2)}%`;
+            }
+        }
+        var startedSimulation = false;
+        var initialAliveMessage = false;
+        function onProgressUnity(progress) {
+
+            if (!initialAliveMessage) {
+                initialAliveMessage = true;
+                const spinner = document.querySelector('.spinner');
+                spinner.style.display = "none";
+            }
+
+            if (startedSimulation){
+                return;
+            }
+            let percent = easeOutQuadPercentage(progress * 100);
+            if (percent >= 89) {
+                startedSimulation = true;
+                clearInterval(simulationInterval); // Stop any ongoing simulation
+                simulationInterval = setInterval(simulateProgress, 600); // Start simulating after 89%
+            } else {
+                updateProgressUI(percent);
+            }
+        }
+
+            var tipInterval;
+          loadingCover.style.display = "";
+          const _script = document.createElement("script");
+          _script.type = 'text/javascript';
+          _script.src = loaderUrl;
+          window.gameLoading = true;
+          reportLoadingStart();
+          var reachedLastLoadingStep = false;
+          
+          _script.onload = () => {
+              createUnityInstance(canvas, config, (progress) => {
+                  onProgressUnity(progress);
+              }).then((unityInstance) => {
+                  clearInterval(tipInterval);
+                  window.unityInstance = unityInstance;
+                  window.onGameLoaded();
+                  setTimeout(function () {
+                      var animDuration = 200;
+                      loadingCover.animate([
+                          { opacity: '1' },
+                          { opacity: '0' }
+                      ], {
+                          duration: animDuration,
+                          fill: 'forwards'
+                      });
+                      loadingCover.animate([
+                          { transform: 'scale(1)', opacity: '1' },
+                          { transform: 'scale(2)', opacity: '0' }
+                      ], {
+                          duration: animDuration,
+                          fill: 'forwards'
+                      });
+                      setTimeout(function () {
+                          if (loadingCover) {
+                              loadingCover.remove();
+                          }
+                      }, animDuration);
+                  }, 100);
+                  window.gameLoading = false;
+                  reportLoadingFinished();
+                  console.log('%cWARNING: Do not paste any scripts into this console. Pasting script/code can compromise your device and may lead to a ban.', 'color: red; font-weight: bold;');
+              }).catch((error) => {
+                  let errorMessage = (error.message ? error.message : error.toString()).toLowerCase();
+                  customOnError(errorMessage);
+              });
+            };
+            (function () {
+                const originalConsoleError = console.error;
+                console.error = function (...args) {
+                    const errorMessage = args.join(' ');
+                    if (errorMessage.includes("extra work")) {
+                        return;
+                    }
+                    customOnError(errorMessage);
+                    originalConsoleError.apply(console, args);
+                };
+            })();
+            function customOnError(message) {
+                var isFileDownloadError = message.toLowerCase().includes('failed to download file') && (message.includes('.data') || message.includes('.wasm') || message.includes('.br'));
+                var isWasmError = message.toLowerCase().includes('both async and sync fetching of the wasm failed');
+                var isUnableToLoadFileError = message.toLowerCase().includes("unable to load file") && (message.includes('.js') || message.includes('.br') || message.includes('.framework'));
+                if (isFileDownloadError || isWasmError) {
+                    showRetryPopup("Failed Downloading Game Files. <br>Click to try again.", true, true);
+                    gtag('event', "downloadGameFilesFailedErrorCatched", {
+                        'event_category': 'error',
+                        'event_label': message
+                    });
+                }
+                else if (isUnableToLoadFileError) {
+                    showRetryPopup("Failed Downloading Game Files. <br>Click to try again.", true, false);
+                    gtag('event', "downloadGameFilesFailedErrorCatched", {
+                        'event_category': 'error',
+                        'event_label': message
+                    });
+                }
+            }
+            window.addEventListener('offline', function () {
+                if (window.gameLoading)
+                    showRetryPopup("You are Offline. Please Connect to the internet. <br>Click to try again", true, false);
+            });
+            var totalRetryTimes = 0;
+            const retryUnityLoad = () => {
+                console.log("Retrying to load the unity instance (retryUnityLoad)");
+                if (!navigator.onLine) {
+                    console.log("You are not online! Abort retryUnityLoad.");
+                    return;
+                }
+                var popup = document.getElementById('unityRetryPopup');
+                if (popup != null)
+                    document.body.removeChild(popup);
+                if (window.unityInstance)
+                {
+                    console.log("unityInstance exists! Abort retryUnityLoad.");
+                    return;
+                }
+                removeScriptBySrc(loaderUrl);
+                const _newScript = document.createElement("script");
+                _newScript.src = loaderUrl;
+                window.gameLoading = true;
+                reportLoadingStart();
+                var reachedLastLoadingStep = false;
+                _newScript.onload = () => {
+                    createUnityInstance(canvas, config, (progress) => {
+                        onProgressUnity(progress);
+                    }).then((unityInstance) => {
+                        clearInterval(tipInterval);
+                        window.unityInstance = unityInstance;
+                        window.onGameLoaded();
+                        setTimeout(function () {
+                            var animDuration = 200;
+                            loadingCover.animate([
+                                { opacity: '1' },
+                                { opacity: '0' }
+                            ], {
+                                duration: animDuration,
+                                fill: 'forwards'
+                            });
+                            loadingCover.animate([
+                                { transform: 'scale(1)', opacity: '1' },
+                                { transform: 'scale(2)', opacity: '0' }
+                            ], {
+                                duration: animDuration,
+                                fill: 'forwards'
+                            });
+                            setTimeout(function () {
+                                if (loadingCover) {
+                                    loadingCover.remove();
+                                }
+                            }, animDuration);
+                        }, 100);
+                        window.gameLoading = false;
+                        reportLoadingFinished();
+                        console.log('%cWARNING: Do not paste any scripts into this console. Pasting script/code can compromise your device and may lead to a ban.', 'color: red; font-weight: bold;');
+                    }).catch((error) => {
+                        let errorMessage = (error.message ? error.message : error.toString()).toLowerCase();
+                        customOnError(errorMessage);
+                    });
+                };
+                document.body.appendChild(_newScript);
+            };
+            function showRetryPopup(message, retry, retryRn) {
+                if (!window.gameLoading)
+                    return;
+                if (window.unityInstance)
+                    return;
+                if (retryRn && totalRetryTimes <= 3) {
+                    retryUnityLoad();
+                    return;
+                }
+                var existingPopup = document.getElementById('unityRetryPopup');
+                if (existingPopup) {
+                    existingPopup.querySelector('.popup-content').innerHTML = message;
+                    return;
+                }
+                var popup = document.createElement("div");
+                popup.id = 'unityRetryPopup';
+                popup.style.position = "fixed";
+                popup.style.left = "0";
+                popup.style.top = "0";
+                popup.style.width = "100%";
+                popup.style.height = "100%";
+                popup.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+                popup.style.display = "flex";
+                popup.style.alignItems = "center";
+                popup.style.justifyContent = "center";
+                popup.style.userSelect = "none";
+                popup.style.zIndex = "1000";
+                var content = document.createElement("div");
+                content.style.padding = "20px";
+                content.style.backgroundColor = "#333"; // Dark background for the content
+                content.style.color = "#fff"; // White text color
+                content.style.borderRadius = "15px"; // Rounded corners
+                content.style.textAlign = "center";
+                content.style.maxWidth = "80%";
+                content.style.fontSize = "18px";
+                content.innerHTML = message;
+                content.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+                content.style.boxShadow = "0 10px 10px rgba(0, 0, 0, 0.2)";
+                content.style.cursor = "pointer"; // Change cursor on hover
+                content.style.userSelect = "none";
+                popup.appendChild(content);
+                document.body.appendChild(popup);
+                if (retry) {
+                    popup.addEventListener("click", retryUnityLoad);
+                    popup.addEventListener("touchstart", retryUnityLoad, { passive: true });
+                }
+                else {
+                    popup.addEventListener("click", () => {
+                        document.body.removeChild(popup);
+                    });
+                    popup.addEventListener("touchstart", () => {
+                        document.body.removeChild(popup);
+                    }, { passive: true });
+                }
+            }
+            document.body.appendChild(_script);
+            function removeScriptBySrc(src) {
+                let scripts = document.getElementsByTagName('script');
+                for (let i = 0; i < scripts.length; i++) {
+                    if (scripts[i].src === src) {
+                        scripts[i].parentNode.removeChild(scripts[i]);
+                    }
+                }
+            }
+    </script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer type="73e32866a0482d67866e7c77-text/javascript"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer type="73e32866a0482d67866e7c77-text/javascript"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js" defer type="73e32866a0482d67866e7c77-text/javascript"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-functions-compat.js" defer type="73e32866a0482d67866e7c77-text/javascript"></script>
+<script src="https://kour.io/firebase-compact.js" defer type="73e32866a0482d67866e7c77-text/javascript"></script>
+
+<script type="73e32866a0482d67866e7c77-text/javascript">
+        function testDevice() {
+            try {
+                navigator.getBattery().then(function (battery) {
+                    if (battery.charging && battery.chargingTime === 0) {
+                        unityInstanceWrapper.sendMessage('MainManager', 'OnGotDevice', "Desktop");
+                    } else {
+                        unityInstanceWrapper.sendMessage('MainManager', 'OnGotDevice', "Laptop");
+                    }
+                }).catch(function (error) {
+                    unityInstanceWrapper.sendMessage('MainManager', 'OnGotDevice', "Unknown");
+                });
+            } catch (error) {
+                unityInstanceWrapper.sendMessage('MainManager', 'OnGotDevice', "Unknown");
+            }
+        }
+        function SetPaypalPaymentWindow(x) {
+            document.getElementById('paypalPaymentWindow').style.display = x;
+        }
+        function CancelPaypalProcess() {
+            document.getElementById('paypalPaymentWindow').style.display = "none";
+            unityInstanceWrapper.sendMessage('Payments', 'OnPayPalPurchaseFinished', "0");
+        }
+        function Purchase(amount) {
+            window.currentPaymentPrice = amount;
+            document.getElementById('paypalPaymentWindow').style.display = 'block';
+        }
+        function SetURL(add) {
+            var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname + add;
+            window.history.pushState({ path: currentURL }, '', currentURL);
+        }
+        function copyCurrentURL() {
+            var u = window.location.href;
+            setClipboard(u);
+        }
+
+        function LockCursor(enableAcceleration) {
+            // Check for API support
+            if (!canvas.requestPointerLock && !canvas.mozRequestPointerLock && !canvas.webkitRequestPointerLock) {
+                console.error("Pointer Lock API is not supported in this browser.");
+                return; // Early return if API is not supported
+            }
+
+            // Polyfill for various browser prefixes
+            canvas.requestPointerLock = canvas.requestPointerLock ||
+                canvas.mozRequestPointerLock ||
+                canvas.webkitRequestPointerLock;
+
+            const useAcceleration = (enableAcceleration === "1");
+
+            try {
+                // Attempt to use unadjustedMovement if possible
+                if (canvas.requestPointerLock.length === 1) {
+                    // Browser supports options object
+                    const options = useAcceleration ? { unadjustedMovement: false } : { unadjustedMovement: true };
+                    const promise = canvas.requestPointerLock(options);
+
+                    if (promise instanceof Promise) {
+                        promise.catch((error) => {
+                            console.error("Error attempting to lock pointer with acceleration settings:", error);
+                            canvas.requestPointerLock(); // Fallback to basic pointer lock without options
+                        });
+                    }
+                } else {
+                    // Browser does not support options object
+                    canvas.requestPointerLock();
+                }
+            } catch (error) {
+                console.error("Error attempting to lock pointer with acceleration settings:", error);
+                canvas.requestPointerLock(); // Fallback to basic pointer lock without options
+            }
+        }
+
+        function handlePointerLockError(error) {
+            if (error.name === "NotSupportedError") {
+                console.error("Unadjusted movement not supported, attempting to lock pointer without it.");
+                canvas.requestPointerLock(); // Fallback to basic pointer lock
+            } else {
+                console.error("Failed to lock pointer:", error);
+            }
+        }
+
+        // Setup event listeners for pointer lock state changes
+        document.addEventListener('pointerlockchange', lockChangeAlert, false);
+        document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
+        document.addEventListener('webkitpointerlockchange', lockChangeAlert, false);
+
+        function lockChangeAlert() {
+            if (document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {
+                // Pointer was successfully locked
+                //console.log("Pointer locked successfully.");
+                window.isMouseLocked = true;
+            } else {
+                // Pointer was unlocked
+                window.isMouseLocked = false;
+                unityInstanceWrapper.sendMessage('MainManager', 'OnEscapeJS');
+            }
+        }
+
+
+        function toggleFullscreen() {
+            if (document.fullscreenElement === null) {
+                openFullscreen();
+                return;
+            }
+            exitFullscreen();
+        }
+        function openFullscreen() {
+            document.documentElement.requestFullscreen();
+        }
+        function exitFullscreen() {
+            document.exitFullscreen();
+        }
+        async function setClipboard(stringToSetAsClipboard) {
+            try {
+                await navigator.clipboard.writeText(stringToSetAsClipboard);
+                console.log('Text copied to clipboard successfully!');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+        function getClipboard() {
+            navigator.clipboard.readText()
+                .then((clipboardContent) => {
+                    unityInstanceWrapper.sendMessage('MainManager', 'OnGotClipboard', clipboardContent);
+                })
+                .catch((error) => {
+                    console.error('Clipboard access error:', error);
+                });
+        }
+        canvas.addEventListener("webglcontextlost", function (event) {
+            event.preventDefault();
+            retryUnityLoad();
+        }, false);
+
+        function sendFocusStatusToUnity(focused) {
+            unityInstanceWrapper.sendMessage('MainManager', 'OnHtmlFocus', focused);
+        }
+        window.addEventListener('focus', function() {
+            sendFocusStatusToUnity('true');
         });
-      };
-      document.body.appendChild(script);
+        window.addEventListener('blur', function() {
+            sendFocusStatusToUnity('false');
+        });
+        const scriptSrc = hasQueryParam('cg') ? 'sdkManager_cg.js' : 'sdkManager.js';
+        const script = document.createElement('script');
+        script.src = scriptSrc;
+        script.defer = true;
+        document.head.appendChild(script);
     </script>
+<script src="mapManager.js" async type="73e32866a0482d67866e7c77-text/javascript"></script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="73e32866a0482d67866e7c77-|49" defer></script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8b9640b5792450f3',t:'MTcyNDcwMDc5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"8b9640b5792450f3","serverTiming":{"name":{"cfL4":true}},"version":"2024.8.0","token":"eef0583ca9844e8fab4baffc7fe0dc4d"}' crossorigin="anonymous"></script>
 </body>
 </html>
