@@ -21,6 +21,17 @@
 <div id="unity-warning"> </div>
 </div>
 <script>
+
+        var v_isYSDKInitialized = false;
+        var v_isPlayerAuthorized = false;
+        var player;
+
+        function GameReadyNow(){
+          ysdk.features.LoadingAPI?.ready();
+        }
+
+    </script>
+<script>
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
